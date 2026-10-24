@@ -124,7 +124,7 @@ out/
 .project
 .classpath
 .settings/
-packging/*
+packaging/*
 
 # Archivos de Sistema Operativo
 .DS_Store
