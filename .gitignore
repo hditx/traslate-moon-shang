@@ -1,0 +1,147 @@
+# ==============================================================================
+# .gitignore para Proyecto Moon Shang (Monorepo: Android + Frontend + Backend)
+# Excluye configuraciones de entorno, paquetes/dependencias y datos sensibles.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# 1. Entornos, Secretos y Credenciales Sensibles (Seguridad)
+# ------------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.template
+*.pem
+*.key
+*.pkcs12
+*.p12
+*.pfx
+*.crt
+*.cer
+*.der
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+secrets/
+credentials.json
+auth.json
+service-account*.json
+token.json
+
+# ------------------------------------------------------------------------------
+# 2. Android & Gradle
+# ------------------------------------------------------------------------------
+.gradle/
+build/
+android/.gradle/
+android/build/
+android/app/build/
+**/build/
+local.properties
+key.properties
+*.keystore
+*.jks
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+*.hprof
+google-services.json
+crashlytics-build.properties
+captures/
+.cxx/
+
+# ------------------------------------------------------------------------------
+# 3. Frontend & Node.js (Vue 3, Vite, pnpm / npm / yarn)
+# ------------------------------------------------------------------------------
+node_modules/
+**/node_modules/
+.pnpm-store/
+frontend/dist/
+frontend/dist-ssr/
+dist/
+dist-ssr/
+.vite/
+.turbo/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.eslintcache
+.stylelintcache
+
+# ------------------------------------------------------------------------------
+# 4. Backend (Python, FastAPI, PyMuPDF)
+# ------------------------------------------------------------------------------
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+backend/.venv/
+venv/
+env/
+ENV/
+*.egg-info/
+*.egg
+wheels/
+.pytest_cache/
+**/.pytest_cache/
+.ruff_cache/
+**/.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Bases de datos y almacenamiento local
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-wal
+moon_shang.db
+moon_shang.db-wal
+moon_shang.db-shm
+
+# ------------------------------------------------------------------------------
+# 5. IDEs, Editores de Código y Herramientas del Sistema
+# ------------------------------------------------------------------------------
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.vscode/
+!.vscode/extensions.json
+*.sublime-project
+*.sublime-workspace
+.project
+.classpath
+.settings/
+
+# Archivos de Sistema Operativo
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Logs y Archivos Temporales
+*.log
+logs/
+temp/
+tmp/
+scratch/
+*~
+*.swp
+*.swo
+*.bak
