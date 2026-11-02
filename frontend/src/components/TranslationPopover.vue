@@ -6,6 +6,14 @@ import { useSpeech } from '@/composables/useSpeech'
 import { getDesktopBridge } from '@/services/bridge.factory'
 import { isHanzi, extractHanziList } from '@/utils/hanzi'
 import StrokeOrderModal from './StrokeOrderModal.vue'
+import {
+  IconBrush,
+  IconPin,
+  IconClose,
+  IconSpeaker,
+  IconCopy,
+  IconCheck,
+} from '@/components/icons'
 
 const props = defineProps<{
   token: DetectedToken | null
@@ -175,6 +183,9 @@ onUnmounted(() => {
       :style="floatingStyles"
       @click.stop
     >
+      <!-- Cinta superior decorativa de oro antiguo erudito -->
+      <div class="popover-accent-bar" />
+
       <!-- Cabecera de la tarjeta: Estado fijado y botón cerrar -->
       <div class="popover-header">
         <span class="confidence-badge">
@@ -188,7 +199,7 @@ onUnmounted(() => {
             title="Ver orden de trazos y caligrafía (笔顺)"
             @click.stop="openStrokeOrder()"
           >
-            ✍️
+            <IconBrush :size="13" />
           </button>
           <button
             class="action-btn pin-btn"
@@ -196,10 +207,10 @@ onUnmounted(() => {
             :title="isPinned ? 'Desfijar ventana' : 'Fijar ventana'"
             @click="emit('toggle-pin')"
           >
-            📌
+            <IconPin :size="13" />
           </button>
           <button class="action-btn close-btn" title="Cerrar (Esc)" @click="closePopover">
-            ✕
+            <IconClose :size="12" />
           </button>
         </div>
       </div>
@@ -227,7 +238,7 @@ onUnmounted(() => {
             title="Escuchar pronunciación"
             @click="playPronunciation"
           >
-            🔊
+            <IconSpeaker :size="14" />
           </button>
         </div>
 
@@ -247,14 +258,16 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <!-- Barra de acciones inferiores: Copiar -->
+      <!-- Barra de acciones inferiores: Copiar con pastillas elegantes -->
       <div class="popover-footer">
         <button
           class="btn-footer"
           :class="{ copied: copiedField === 'zh' }"
           @click="copyText(token.textZh, 'zh')"
         >
-          {{ copiedField === 'zh' ? '✓ Chino copiado' : 'Copiar Chino' }}
+          <IconCheck v-if="copiedField === 'zh'" :size="12" />
+          <IconCopy v-else :size="12" />
+          <span>{{ copiedField === 'zh' ? '✓ Chino copiado' : 'Copiar Chino' }}</span>
         </button>
 
         <button
@@ -262,7 +275,9 @@ onUnmounted(() => {
           :class="{ copied: copiedField === 'es' }"
           @click="copyText(displayTranslation, 'es')"
         >
-          {{ copiedField === 'es' ? '✓ Español copiado' : 'Copiar Español' }}
+          <IconCheck v-if="copiedField === 'es'" :size="12" />
+          <IconCopy v-else :size="12" />
+          <span>{{ copiedField === 'es' ? '✓ Español copiado' : 'Copiar Español' }}</span>
         </button>
       </div>
 
@@ -282,22 +297,30 @@ onUnmounted(() => {
   position: fixed;
   z-index: 1000;
   width: 320px;
-  background: rgba(15, 23, 42, 0.94);
+  background: var(--color-bg-popover);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(56, 189, 248, 0.35);
+  border: 1px solid var(--color-accent-border);
   border-radius: 14px;
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.65), 0 0 20px rgba(56, 189, 248, 0.15);
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.75), 0 0 20px rgba(197, 160, 89, 0.12);
   color: var(--color-text-primary);
-  padding: 14px;
+  padding: 0 14px 14px;
   user-select: text;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.popover-accent-bar {
+  margin: 0 -14px 2px;
+  height: 3px;
+  background: var(--color-accent-gradient);
+  flex-shrink: 0;
 }
 
 .translation-popover.is-pinned {
-  border-color: #f59e0b;
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.65), 0 0 20px rgba(245, 158, 11, 0.25);
+  border-color: var(--color-accent-hover);
+  box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.8), 0 0 24px rgba(212, 175, 55, 0.25);
 }
 
 .popover-header {
@@ -308,11 +331,13 @@ onUnmounted(() => {
 
 .confidence-badge {
   font-size: 11px;
-  background: rgba(56, 189, 248, 0.15);
-  color: #38bdf8;
+  background: var(--color-accent-subtle);
+  color: var(--color-accent-hover);
+  border: 1px solid var(--color-accent-border);
   padding: 2px 8px;
   border-radius: 9999px;
   font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .header-actions {
@@ -325,30 +350,30 @@ onUnmounted(() => {
   background: transparent;
   border: none;
   color: var(--color-text-secondary);
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 12px;
   transition: all 0.15s ease;
 }
 
 .action-btn:hover {
-  background: var(--color-bg-tertiary);
-  color: var(--color-text-primary);
+  background: rgba(197, 160, 89, 0.15);
+  color: var(--color-accent-hover);
 }
 
 .action-btn.pin-btn.active {
-  color: #f59e0b;
-  background: rgba(245, 158, 11, 0.2);
+  color: var(--color-accent-hover);
+  background: rgba(197, 160, 89, 0.22);
 }
 
 .action-btn.stroke-btn:hover {
-  background: rgba(56, 189, 248, 0.2);
-  transform: scale(1.1);
+  background: rgba(197, 160, 89, 0.2);
+  color: var(--color-accent-hover);
+  transform: scale(1.08);
 }
 
 .popover-body {
@@ -367,13 +392,14 @@ onUnmounted(() => {
 .hanzi-text {
   font-size: 26px;
   font-weight: 700;
-  color: #38bdf8;
+  color: var(--color-accent-hover);
   line-height: 1.2;
+  letter-spacing: 0.02em;
 }
 
 .hanzi-char {
   display: inline-block;
-  padding: 0 1px;
+  padding: 0 2px;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -381,36 +407,35 @@ onUnmounted(() => {
 }
 
 .hanzi-char:hover {
-  background-color: rgba(56, 189, 248, 0.2);
-  color: #f59e0b;
+  background-color: rgba(197, 160, 89, 0.2);
+  color: #ffffff;
   transform: translateY(-2px);
-  text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+  text-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
 }
 
 .punctuation-char {
-  color: #94a3b8;
+  color: var(--color-text-muted);
 }
 
-
 .speaker-btn {
-  background: rgba(56, 189, 248, 0.15);
-  border: 1px solid rgba(56, 189, 248, 0.3);
-  color: #38bdf8;
-  width: 32px;
-  height: 32px;
+  background: var(--color-accent-subtle);
+  border: 1px solid var(--color-accent-border);
+  color: var(--color-accent-hover);
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 14px;
   transition: all 0.15s ease;
 }
 
 .speaker-btn:hover {
   background: var(--color-accent);
-  color: #0f172a;
+  color: #11141a;
   transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(197, 160, 89, 0.35);
 }
 
 .speaker-btn.is-speaking {
@@ -419,11 +444,11 @@ onUnmounted(() => {
 
 @keyframes pulse-speaker {
   from {
-    box-shadow: 0 0 4px #38bdf8;
+    box-shadow: 0 0 4px #c5a059;
   }
   to {
-    box-shadow: 0 0 16px #38bdf8;
-    transform: scale(1.1);
+    box-shadow: 0 0 14px #d4af37;
+    transform: scale(1.08);
   }
 }
 
@@ -433,15 +458,15 @@ onUnmounted(() => {
 }
 
 .pinyin-text {
-  color: #6ee7b7;
+  color: #dfd5c2;
   font-size: 14px;
   font-weight: 500;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.03em;
 }
 
 .divider {
   height: 1px;
-  background: var(--color-border);
+  background: rgba(197, 160, 89, 0.16);
   margin: 4px 0;
 }
 
@@ -452,8 +477,9 @@ onUnmounted(() => {
 }
 
 .lang-tag {
-  background: rgba(248, 250, 252, 0.1);
-  color: var(--color-text-secondary);
+  background: rgba(197, 160, 89, 0.14);
+  color: var(--color-accent);
+  border: 1px solid rgba(197, 160, 89, 0.25);
   font-size: 10px;
   font-weight: 700;
   padding: 2px 5px;
@@ -464,7 +490,7 @@ onUnmounted(() => {
 .translation-text {
   color: var(--color-text-primary);
   font-size: 14px;
-  line-height: 1.45;
+  line-height: 1.48;
   font-weight: 500;
   flex: 1;
 }
@@ -477,30 +503,35 @@ onUnmounted(() => {
 
 .btn-footer {
   flex: 1;
-  background: var(--color-bg-tertiary);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-primary);
+  background: var(--color-bronze-btn);
+  border: 1px solid var(--color-bronze-border);
+  color: #e2dacb;
   font-family: inherit;
   font-size: 11px;
   font-weight: 500;
   padding: 6px 10px;
-  border-radius: var(--radius-sm);
+  border-radius: 9999px;
   cursor: pointer;
   transition: all 0.15s ease;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 
 .btn-footer:hover {
-  background: #475569;
+  background: var(--color-bronze-btn-hover);
   border-color: var(--color-accent);
+  color: #ffffff;
 }
 
 .btn-footer.copied {
-  background: rgba(16, 185, 129, 0.2);
-  border-color: #10b981;
-  color: #34d399;
+  background: rgba(46, 93, 70, 0.28);
+  border-color: rgba(69, 133, 100, 0.6);
+  color: #8fd4af;
 }
 
 /* Transiciones suaves */
@@ -519,9 +550,12 @@ onUnmounted(() => {
   .translation-popover {
     width: calc(100vw - 20px);
     max-width: 340px;
-    padding: 10px 12px;
+    padding: 0 10px 10px;
     gap: 8px;
     border-radius: 12px;
+  }
+  .popover-accent-bar {
+    margin: 0 -10px 2px;
   }
   .hanzi-text {
     font-size: 22px;

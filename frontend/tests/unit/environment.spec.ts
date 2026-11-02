@@ -9,8 +9,10 @@ describe('Frontend Environment & Sanity Check', () => {
     setActivePinia(createPinia())
   })
 
-  it('renders App component properly with DocumentViewer', () => {
+  it('renders App component properly with DocumentViewer', async () => {
     const wrapper = mount(App)
+    const readerTab = wrapper.find('[data-testid="nav-reader"]')
+    await readerTab.trigger('click')
     expect(wrapper.text()).toContain('Carga una imagen o PDF con texto en chino')
     expect(wrapper.find('.empty-card').exists()).toBe(true)
   })

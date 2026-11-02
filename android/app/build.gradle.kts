@@ -46,6 +46,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.activity:activity-ktx:1.9.0")
     implementation("androidx.webkit:webkit:1.11.0")
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")

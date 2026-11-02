@@ -86,25 +86,25 @@ function handleClick(token: DetectedToken, event: MouseEvent) {
 .bounding-box-item {
   position: absolute;
   pointer-events: auto;
-  border: 1.5px solid rgba(56, 189, 248, 0.4);
-  background-color: rgba(56, 189, 248, 0.08);
+  border: 1.5px solid rgba(197, 160, 89, 0.45);
+  background-color: rgba(197, 160, 89, 0.08);
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .bounding-box-item:hover {
-  border-color: #38bdf8;
-  background-color: rgba(56, 189, 248, 0.25);
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.45);
+  border-color: #d4af37;
+  background-color: rgba(197, 160, 89, 0.22);
+  box-shadow: 0 0 10px rgba(197, 160, 89, 0.35);
   transform: scale(1.02);
   z-index: 10;
 }
 
 .bounding-box-item.is-active {
-  border-color: #f59e0b;
-  background-color: rgba(245, 158, 11, 0.3);
-  box-shadow: 0 0 14px rgba(245, 158, 11, 0.6);
+  border-color: #f7f4ed;
+  background-color: rgba(197, 160, 89, 0.38);
+  box-shadow: 0 0 14px rgba(212, 175, 55, 0.55);
   z-index: 20;
 }
 </style>

@@ -21,6 +21,8 @@ function createMockPageSvg(width: number, height: number): string {
 }
 
 export class MockDesktopBridge implements IDesktopBridge {
+  isAndroid = false
+
   private mockDictionary: Record<string, { pinyin: string; es: string }> = {
     '欢迎使用中文翻译系统': { pinyin: 'huān yíng shǐ yòng zhōng wén fān yì xì tǒng', es: 'Bienvenido al sistema de traducción de chino' },
     '学习中文是一件快乐的事': { pinyin: 'xué xí zhōng wén shì yī jiàn kuài lè de shì', es: 'Aprender chino es algo feliz y placentero' },
@@ -36,6 +38,13 @@ export class MockDesktopBridge implements IDesktopBridge {
     return {
       filePath: '/mock/path/documento_chino.pdf',
       filename: 'documento_chino.pdf',
+    }
+  }
+
+  async capturePhoto(): Promise<{ filePath: string; filename: string } | null> {
+    return {
+      filePath: '/mock/path/camera_photo.jpg',
+      filename: 'camera_photo.jpg',
     }
   }
 

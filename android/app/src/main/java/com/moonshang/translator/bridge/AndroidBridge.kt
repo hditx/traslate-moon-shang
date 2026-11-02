@@ -41,7 +41,8 @@ class AndroidBridge(
     private val onProcessPageRequest: ((String, Int) -> String)? = null,
     private val onTranslateTokenRequest: ((String) -> String)? = null,
     private val onPinyinRequest: ((String) -> String)? = null,
-    private val onPlayAudioRequest: ((String) -> Boolean)? = null
+    private val onPlayAudioRequest: ((String) -> Boolean)? = null,
+    private val onCapturePhotoRequest: (() -> String?)? = null
 ) {
 
     @JavascriptInterface
@@ -70,6 +71,17 @@ class AndroidBridge(
 
     @JavascriptInterface
     fun open_file_dialog(): String? = openFileDialog()
+
+    @JavascriptInterface
+    fun capturePhoto(): String? {
+        if (onCapturePhotoRequest != null) {
+            return onCapturePhotoRequest.invoke()
+        }
+        return null
+    }
+
+    @JavascriptInterface
+    fun capture_photo(): String? = capturePhoto()
 
     companion object {
         val ALLOWED_EXTENSIONS = setOf("pdf", "png", "jpg", "jpeg", "webp")

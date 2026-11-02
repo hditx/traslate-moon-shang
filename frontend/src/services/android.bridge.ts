@@ -25,13 +25,15 @@ function parseAndroidResponse<T>(response: any): T {
 }
 
 export class AndroidBridge implements IDesktopBridge {
-  private get api() {
-    if (typeof window === 'undefined' || !window.androidApi) {
+  readonly isAndroid = true
+
+  private get api(): Record<string, (...args: any[]) => any> {
+    if (typeof window === 'undefined' || (!window.androidApi && !window.AndroidBridge)) {
       const err = new Error('La interfaz nativa Android (window.androidApi) no está disponible en este entorno.')
       logger.error('AndroidBridge', 'API no disponible', err)
       throw err
     }
-    return window.androidApi
+    return (window.androidApi || window.AndroidBridge)!
   }
 
   /**
@@ -141,6 +143,19 @@ export class AndroidBridge implements IDesktopBridge {
     } catch (err) {
       logger.error('AndroidBridge', `Error al reproducir audio para '${textZh}'`, err)
       return false
+    }
+  }
+
+  async capturePhoto(): Promise<{ filePath: string; filename: string } | null> {
+    logger.debug('AndroidBridge', 'Invocando captura fotográfica con cámara en Android...')
+    try {
+      const raw = await this.invokeNative('capturePhoto')
+      const parsed = parseAndroidResponse<{ filePath: string; filename: string } | null>(raw)
+      logger.info('AndroidBridge', 'Foto capturada en Android:', parsed)
+      return parsed ?? null
+    } catch (err) {
+      logger.error('AndroidBridge', 'Error en capturePhoto Android', err)
+      throw err
     }
   }
 }

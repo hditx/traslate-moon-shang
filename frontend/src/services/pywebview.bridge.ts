@@ -3,6 +3,8 @@ import type { DocumentData, PageData, TranslationResult } from '@/types/document
 import { logger } from './logger.service'
 
 export class PyWebViewBridge implements IDesktopBridge {
+  readonly isAndroid = false
+
   private get api() {
     if (typeof window === 'undefined' || !window.pywebview?.api) {
       const err = new Error('PyWebView API no está disponible en este entorno.')

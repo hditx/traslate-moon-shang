@@ -11,5 +11,6 @@ interface Window {
     api: Record<string, (...args: any[]) => Promise<any>>
   }
   androidApi?: Record<string, (...args: any[]) => any>
+  AndroidBridge?: Record<string, (...args: any[]) => any>
 }
 

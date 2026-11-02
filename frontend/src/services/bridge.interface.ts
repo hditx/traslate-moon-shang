@@ -35,5 +35,15 @@ export interface IDesktopBridge {
    * Reproduce la pronunciación auditiva de un término o carácter mediante el motor nativo del backend.
    */
   playAudio?(textZh: string): Promise<boolean>
+
+  /**
+   * Captura una foto usando la cámara del dispositivo móvil (exclusivo Android).
+   */
+  capturePhoto?(): Promise<{ filePath: string; filename: string } | null>
+
+  /**
+   * Indica si la aplicación está ejecutándose en un entorno Android nativo.
+   */
+  readonly isAndroid?: boolean
 }
 

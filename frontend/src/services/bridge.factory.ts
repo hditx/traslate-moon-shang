@@ -1,23 +1,24 @@
+import { shallowRef } from 'vue'
 import type { IDesktopBridge } from './bridge.interface'
 import { MockDesktopBridge } from './mock.bridge'
 import { PyWebViewBridge } from './pywebview.bridge'
 import { AndroidBridge } from './android.bridge'
 
-let bridgeInstance: IDesktopBridge | null = null
+const bridgeRef = shallowRef<IDesktopBridge | null>(null)
 
 export function getDesktopBridge(): IDesktopBridge {
-  if (!bridgeInstance) {
-    if (typeof window !== 'undefined' && window.androidApi) {
-      bridgeInstance = new AndroidBridge()
+  if (!bridgeRef.value) {
+    if (typeof window !== 'undefined' && (window.androidApi || window.AndroidBridge)) {
+      bridgeRef.value = new AndroidBridge()
     } else if (typeof window !== 'undefined' && window.pywebview?.api) {
-      bridgeInstance = new PyWebViewBridge()
+      bridgeRef.value = new PyWebViewBridge()
     } else {
-      bridgeInstance = new MockDesktopBridge()
+      bridgeRef.value = new MockDesktopBridge()
     }
   }
-  return bridgeInstance
+  return bridgeRef.value
 }
 
 export function setDesktopBridge(bridge: IDesktopBridge | null): void {
-  bridgeInstance = bridge
+  bridgeRef.value = bridge
 }

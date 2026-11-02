@@ -17,6 +17,39 @@ export const useDocumentStore = defineStore('document', () => {
   const isDocumentLoaded = computed(() => currentDocument.value !== null)
   const totalPages = computed(() => currentDocument.value?.totalPages ?? 1)
   const tokens = computed(() => currentPageData.value?.tokens ?? [])
+  const canCapturePhoto = computed(() => {
+    const bridge = getDesktopBridge()
+    return Boolean(bridge.isAndroid || (typeof window !== 'undefined' && (Boolean(window.androidApi) || Boolean(window.AndroidBridge))))
+  })
+
+  async function capturePhoto(): Promise<boolean> {
+    const bridge = getDesktopBridge()
+    if (!bridge.capturePhoto) {
+      logger.warn('documentStore', 'capturePhoto no está soportado en este entorno')
+      return false
+    }
+
+    errorMessage.value = null
+    status.value = 'loading'
+
+    try {
+      logger.info('documentStore', 'Iniciando captura de foto con cámara...')
+      const photoRes = await bridge.capturePhoto()
+      if (!photoRes || !photoRes.filePath) {
+        logger.info('documentStore', 'Captura de foto cancelada por el usuario')
+        status.value = currentDocument.value ? 'ready' : 'idle'
+        return false
+      }
+
+      logger.info('documentStore', `Foto capturada con éxito: ${photoRes.filePath}`)
+      return await openDocument(photoRes.filePath)
+    } catch (err: any) {
+      logger.error('documentStore', 'Fallo al capturar foto', err)
+      status.value = 'error'
+      errorMessage.value = err?.message || 'Error al capturar foto con la cámara'
+      return false
+    }
+  }
 
   async function openDocument(explicitPath?: string): Promise<boolean> {
     const bridge = getDesktopBridge()
@@ -115,9 +148,11 @@ export const useDocumentStore = defineStore('document', () => {
     activeToken,
     activeTokenRect,
     isDocumentLoaded,
+    canCapturePhoto,
     totalPages,
     tokens,
     openDocument,
+    capturePhoto,
     loadPage,
     goToPage,
     nextPage,

@@ -4,6 +4,7 @@ import HanziWriter from 'hanzi-writer'
 import { isHanzi } from '@/utils/hanzi'
 import { useSpeech } from '@/composables/useSpeech'
 import { getDesktopBridge } from '@/services/bridge.factory'
+import { IconSpeaker, IconClose } from '@/components/icons'
 
 const props = defineProps<{
   isOpen: boolean
@@ -113,11 +114,11 @@ function initOrUpdateWriter() {
       showOutline: showOutline.value,
       strokeAnimationSpeed: speed.value,
       delayBetweenStrokes: 160,
-      strokeColor: '#38bdf8', // Azul cian brillante para trazos
-      radicalColor: '#f59e0b', // Ámbar dorado para radicales
-      outlineColor: 'rgba(148, 163, 184, 0.25)', // Silueta suave
-      highlightColor: '#10b981', // Verde esmeralda para aciertos
-      drawingColor: '#38bdf8',
+      strokeColor: '#c5a059', // Oro antiguo erudito para trazos
+      radicalColor: '#d4af37', // Oro radiante para radicales
+      outlineColor: 'rgba(212, 197, 169, 0.22)', // Silueta suave pergamino
+      highlightColor: '#4e8752', // Verde jade erudito para aciertos
+      drawingColor: '#c5a059',
       drawingWidth: 16,
       showHintAfterMisses: 2,
       onLoadCharDataSuccess: (data: any) => {
@@ -254,6 +255,9 @@ onUnmounted(() => {
     <Transition name="stroke-modal-fade">
       <div v-if="isOpen" class="stroke-modal-backdrop" @click="emit('close')">
         <div class="stroke-modal-card" @click.stop>
+          <!-- Cinta superior decorativa -->
+          <div class="modal-accent-bar" />
+
           <!-- Cabecera del modal -->
           <div class="modal-header">
             <div class="header-info">
@@ -270,11 +274,13 @@ onUnmounted(() => {
                   title="Escuchar pronunciación"
                   @click="playCharSpeech"
                 >
-                  🔊
+                  <IconSpeaker :size="16" />
                 </button>
               </h2>
             </div>
-            <button class="btn-close" title="Cerrar (Esc)" @click="emit('close')">✕</button>
+            <button class="btn-close" title="Cerrar (Esc)" @click="emit('close')">
+              <IconClose :size="15" />
+            </button>
           </div>
 
           <!-- Selector de caracteres en contexto (si hay más de uno) -->
@@ -411,7 +417,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(15, 23, 42, 0.75);
+  background-color: rgba(14, 17, 23, 0.82);
   backdrop-filter: blur(8px);
 }
 
@@ -420,29 +426,36 @@ onUnmounted(() => {
   flex-direction: column;
   width: 90%;
   max-width: 460px;
-  background: rgba(30, 41, 59, 0.95);
-  border: 1px solid rgba(56, 189, 248, 0.25);
+  background: rgba(22, 27, 36, 0.97);
+  border: 1px solid rgba(197, 160, 89, 0.35);
   border-radius: 16px;
   box-shadow:
-    0 20px 40px -15px rgba(0, 0, 0, 0.7),
-    0 0 30px rgba(56, 189, 248, 0.15);
+    0 24px 48px -15px rgba(0, 0, 0, 0.8),
+    0 0 28px rgba(197, 160, 89, 0.12);
   overflow: hidden;
-  color: #f8fafc;
+  color: var(--color-text-primary);
+}
+
+.modal-accent-bar {
+  height: 3px;
+  background: var(--color-accent-gradient);
+  width: 100%;
+  flex-shrink: 0;
 }
 
 .modal-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 16px 20px 12px;
-  border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+  padding: 14px 20px 12px;
+  border-bottom: 1px solid rgba(197, 160, 89, 0.18);
 }
 
 .modal-badge {
   display: inline-block;
   font-size: 11px;
   font-weight: 600;
-  color: #38bdf8;
+  color: #d4af37;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 4px;
@@ -460,7 +473,7 @@ onUnmounted(() => {
 .highlight-char {
   font-size: 26px;
   font-weight: bold;
-  color: #f59e0b;
+  color: #d4af37;
   font-family: 'Noto Sans SC', sans-serif;
 }
 
@@ -468,28 +481,34 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   padding: 2px 8px;
-  background: rgba(56, 189, 248, 0.15);
-  border: 1px solid rgba(56, 189, 248, 0.35);
+  background: rgba(197, 160, 89, 0.15);
+  border: 1px solid rgba(197, 160, 89, 0.35);
   border-radius: 6px;
-  color: #38bdf8;
+  color: #d4af37;
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.02em;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.15);
+  box-shadow: 0 0 10px rgba(197, 160, 89, 0.15);
 }
 
 .audio-btn {
-  background: none;
-  border: none;
+  background: rgba(197, 160, 89, 0.12);
+  border: 1px solid rgba(197, 160, 89, 0.28);
+  color: #d4af37;
   cursor: pointer;
-  font-size: 18px;
-  padding: 2px 6px;
-  border-radius: 6px;
-  transition: transform 0.15s ease;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.15s ease;
 }
 
 .audio-btn:hover {
-  transform: scale(1.15);
+  transform: scale(1.1);
+  background: var(--color-accent);
+  color: #11141a;
 }
 
 .audio-btn.is-speaking {
@@ -499,27 +518,31 @@ onUnmounted(() => {
 @keyframes pulse-audio {
   from {
     transform: scale(1);
-    filter: drop-shadow(0 0 2px #38bdf8);
+    box-shadow: 0 0 2px #c5a059;
   }
   to {
-    transform: scale(1.25);
-    filter: drop-shadow(0 0 8px #38bdf8);
+    transform: scale(1.15);
+    box-shadow: 0 0 10px #d4af37;
   }
 }
 
 .btn-close {
   background: transparent;
   border: none;
-  color: #94a3b8;
-  font-size: 18px;
+  color: var(--color-text-secondary);
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  padding: 4px 8px;
+  padding: 0;
   border-radius: 6px;
   transition: all 0.15s ease;
 }
 
 .btn-close:hover {
-  color: #f8fafc;
+  color: var(--color-text-primary);
   background-color: rgba(239, 68, 68, 0.2);
 }
 
@@ -528,13 +551,13 @@ onUnmounted(() => {
   flex-direction: column;
   gap: 6px;
   padding: 10px 20px;
-  background-color: rgba(15, 23, 42, 0.5);
-  border-bottom: 1px solid rgba(51, 65, 85, 0.4);
+  background-color: rgba(17, 20, 26, 0.6);
+  border-bottom: 1px solid rgba(197, 160, 89, 0.16);
 }
 
 .strip-label {
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--color-text-muted);
 }
 
 .strip-tokens {
@@ -547,10 +570,10 @@ onUnmounted(() => {
   min-width: 32px;
   height: 32px;
   padding: 0 6px;
-  background-color: rgba(51, 65, 85, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  background-color: rgba(32, 39, 51, 0.7);
+  border: 1px solid rgba(197, 160, 89, 0.22);
   border-radius: 6px;
-  color: #cbd5e1;
+  color: #e2dacb;
   font-size: 16px;
   font-family: 'Noto Sans SC', sans-serif;
   cursor: pointer;
@@ -558,17 +581,17 @@ onUnmounted(() => {
 }
 
 .char-chip:hover {
-  border-color: #38bdf8;
-  color: #38bdf8;
+  border-color: #d4af37;
+  color: #d4af37;
   transform: translateY(-1px);
 }
 
 .char-chip.active {
-  background-color: #38bdf8;
-  border-color: #38bdf8;
-  color: #0f172a;
+  background-color: #c5a059;
+  border-color: #d4af37;
+  color: #11141a;
   font-weight: bold;
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+  box-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
 }
 
 .mode-tabs {
@@ -580,10 +603,10 @@ onUnmounted(() => {
 .tab-btn {
   flex: 1;
   padding: 8px 12px;
-  background: rgba(15, 23, 42, 0.4);
-  border: 1px solid rgba(51, 65, 85, 0.5);
+  background: rgba(17, 20, 26, 0.5);
+  border: 1px solid rgba(197, 160, 89, 0.22);
   border-radius: 8px;
-  color: #94a3b8;
+  color: var(--color-text-secondary);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -591,14 +614,14 @@ onUnmounted(() => {
 }
 
 .tab-btn:hover {
-  color: #f8fafc;
-  border-color: #475569;
+  color: var(--color-text-primary);
+  border-color: var(--color-accent);
 }
 
 .tab-btn.active {
-  background-color: rgba(56, 189, 248, 0.15);
-  border-color: #38bdf8;
-  color: #38bdf8;
+  background-color: rgba(197, 160, 89, 0.16);
+  border-color: var(--color-accent);
+  color: #d4af37;
   font-weight: 600;
 }
 
@@ -613,10 +636,10 @@ onUnmounted(() => {
   position: relative;
   width: 220px;
   height: 220px;
-  background-color: #0f172a;
-  border: 2px solid #475569;
+  background-color: #12161f;
+  border: 2px solid rgba(197, 160, 89, 0.32);
   border-radius: 8px;
-  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.6);
   overflow: hidden;
 }
 
@@ -628,13 +651,13 @@ onUnmounted(() => {
 }
 
 .guide-line.cross {
-  stroke: rgba(148, 163, 184, 0.25);
+  stroke: rgba(197, 160, 89, 0.22);
   stroke-width: 1.5;
   stroke-dasharray: 4, 4;
 }
 
 .guide-line.diag {
-  stroke: rgba(71, 85, 105, 0.2);
+  stroke: rgba(197, 160, 89, 0.14);
   stroke-width: 1;
   stroke-dasharray: 2, 4;
 }
@@ -653,10 +676,10 @@ onUnmounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: rgba(15, 23, 42, 0.85);
+  background-color: rgba(17, 20, 26, 0.88);
   gap: 8px;
   font-size: 13px;
-  color: #94a3b8;
+  color: var(--color-text-secondary);
   text-align: center;
   padding: 16px;
 }
@@ -664,8 +687,8 @@ onUnmounted(() => {
 .spinner {
   width: 24px;
   height: 24px;
-  border: 3px solid rgba(56, 189, 248, 0.2);
-  border-top-color: #38bdf8;
+  border: 3px solid rgba(197, 160, 89, 0.2);
+  border-top-color: #d4af37;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -685,15 +708,15 @@ onUnmounted(() => {
   justify-content: space-between;
   align-items: center;
   font-size: 12px;
-  color: #94a3b8;
-  background-color: rgba(15, 23, 42, 0.4);
+  color: var(--color-text-secondary);
+  background-color: rgba(17, 20, 26, 0.5);
   padding: 6px 12px;
   border-radius: 6px;
-  border: 1px solid rgba(51, 65, 85, 0.4);
+  border: 1px solid rgba(197, 160, 89, 0.2);
 }
 
 .quiz-step {
-  color: #38bdf8;
+  color: #d4af37;
   font-weight: 600;
 }
 
@@ -701,8 +724,8 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 12px;
-  background-color: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.4);
+  background-color: rgba(46, 93, 70, 0.25);
+  border: 1px solid rgba(69, 133, 100, 0.5);
   padding: 8px 12px;
   border-radius: 8px;
 }
@@ -714,21 +737,21 @@ onUnmounted(() => {
 .quiz-complete-card h4 {
   margin: 0;
   font-size: 13px;
-  color: #10b981;
+  color: #6ee7b7;
 }
 
 .quiz-complete-card p {
   margin: 2px 0 0;
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--color-text-secondary);
 }
 
 .btn-retry {
   margin-left: auto;
   padding: 4px 10px;
-  background-color: #10b981;
-  color: #0f172a;
-  border: none;
+  background-color: var(--color-jade-btn);
+  color: #f0f7f2;
+  border: 1px solid var(--color-jade-border);
   border-radius: 6px;
   font-size: 11px;
   font-weight: 600;
@@ -737,24 +760,24 @@ onUnmounted(() => {
 }
 
 .btn-retry:hover {
-  opacity: 0.9;
+  background-color: var(--color-jade-btn-hover);
 }
 
 .modal-footer {
   display: flex;
   gap: 8px;
   padding: 12px 20px 16px;
-  border-top: 1px solid rgba(51, 65, 85, 0.6);
-  background-color: rgba(15, 23, 42, 0.4);
+  border-top: 1px solid rgba(197, 160, 89, 0.18);
+  background-color: rgba(17, 20, 26, 0.5);
 }
 
 .btn-tool {
   flex: 1;
   padding: 8px 10px;
-  background-color: rgba(51, 65, 85, 0.6);
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  background-color: var(--color-bronze-btn);
+  border: 1px solid var(--color-bronze-border);
   border-radius: 8px;
-  color: #f8fafc;
+  color: var(--color-text-primary);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
@@ -766,15 +789,15 @@ onUnmounted(() => {
 }
 
 .btn-tool:hover {
-  background-color: rgba(56, 189, 248, 0.2);
-  border-color: #38bdf8;
-  color: #38bdf8;
+  background-color: var(--color-bronze-btn-hover);
+  border-color: var(--color-accent);
+  color: #d4af37;
 }
 
 .btn-tool.active {
-  background-color: rgba(56, 189, 248, 0.25);
-  border-color: #38bdf8;
-  color: #38bdf8;
+  background-color: rgba(197, 160, 89, 0.22);
+  border-color: #d4af37;
+  color: #d4af37;
 }
 
 /* Transición animada del Modal */

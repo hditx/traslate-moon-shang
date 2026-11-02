@@ -28,4 +28,15 @@ describe('DocumentViewer Component', () => {
     expect(wrapper.find('.page-image').exists()).toBe(true)
     expect(wrapper.findAll('.bounding-box-item').length).toBe(4)
   })
+
+  it('renders camera button in empty state when on Android', () => {
+    const mockBridge = new MockDesktopBridge()
+    mockBridge.isAndroid = true
+    setDesktopBridge(mockBridge)
+
+    const wrapper = mount(DocumentViewer)
+    const cameraBtn = wrapper.find('[data-testid="empty-camera-button"]')
+    expect(cameraBtn.exists()).toBe(true)
+    expect(cameraBtn.text()).toContain('Sacar foto')
+  })
 })

@@ -1,5 +1,14 @@
 <script setup lang="ts">
 import { useDocumentStore } from '@/stores/documentStore'
+import {
+  IconFolder,
+  IconCamera,
+  IconChevronLeft,
+  IconChevronRight,
+  IconZoomIn,
+  IconZoomOut,
+  IconReset,
+} from '@/components/icons'
 
 defineProps<{
   zoom: number
@@ -19,9 +28,21 @@ const store = useDocumentStore()
     <!-- Grupo izquierdo: Abrir archivo y título -->
     <div class="toolbar-group file-group">
       <button class="btn btn-primary" title="Abrir archivo" @click="store.openDocument()">
-        <span class="icon">📂</span>
+        <IconFolder :size="15" />
         <span class="btn-text-full">Abrir archivo</span>
         <span class="btn-text-short">Abrir</span>
+      </button>
+
+      <button
+        v-if="store.canCapturePhoto"
+        class="btn btn-camera"
+        title="Sacar foto para traducir"
+        data-testid="camera-button"
+        @click="store.capturePhoto()"
+      >
+        <IconCamera :size="15" />
+        <span class="btn-text-full">Sacar foto</span>
+        <span class="btn-text-short">Foto</span>
       </button>
 
       <div v-if="store.currentDocument" class="file-badge" :title="store.currentDocument.filename">
@@ -38,7 +59,7 @@ const store = useDocumentStore()
         title="Página anterior"
         @click="store.prevPage()"
       >
-        ◀
+        <IconChevronLeft :size="13" />
       </button>
 
       <span class="page-indicator">
@@ -52,14 +73,14 @@ const store = useDocumentStore()
         title="Página siguiente"
         @click="store.nextPage()"
       >
-        ▶
+        <IconChevronRight :size="13" />
       </button>
     </div>
 
     <!-- Grupo derecho: Controles de Zoom -->
     <div v-if="store.isDocumentLoaded" class="toolbar-group zoom-controls">
       <button class="btn btn-icon" title="Alejar (Zoom -)" @click="emit('zoom-out')">
-        −
+        <IconZoomOut :size="13" />
       </button>
 
       <span class="zoom-indicator" title="Doble clic para restablecer (100%)" @click="emit('zoom-reset')">
@@ -67,11 +88,11 @@ const store = useDocumentStore()
       </span>
 
       <button class="btn btn-icon" title="Acercar (Zoom +)" @click="emit('zoom-in')">
-        +
+        <IconZoomIn :size="13" />
       </button>
 
       <button class="btn btn-subtle btn-reset" title="Restablecer vista a 100%" @click="emit('zoom-reset')">
-        <span class="reset-icon">↺</span>
+        <IconReset :size="13" />
         <span class="reset-text">Restablecer</span>
       </button>
     </div>
@@ -84,7 +105,7 @@ const store = useDocumentStore()
   align-items: center;
   justify-content: space-between;
   background-color: var(--color-bg-secondary);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid rgba(197, 160, 89, 0.22);
   padding: 6px 14px;
   min-height: 48px;
   gap: 8px;
@@ -109,12 +130,6 @@ const store = useDocumentStore()
   display: none;
 }
 
-.reset-icon {
-  display: none;
-  font-size: 15px;
-  line-height: 1;
-}
-
 .page-short {
   display: none;
 }
@@ -136,35 +151,52 @@ const store = useDocumentStore()
 }
 
 .btn:disabled {
-  opacity: 0.4;
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
 .btn-primary {
   background-color: var(--color-accent);
-  color: #0f172a;
-  border-color: transparent;
+  color: #11141a;
+  border-color: rgba(212, 175, 55, 0.4);
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(197, 160, 89, 0.2);
 }
 
 .btn-primary:hover:not(:disabled) {
   background-color: var(--color-accent-hover);
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+  box-shadow: 0 2px 14px rgba(197, 160, 89, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-camera {
+  background-color: var(--color-jade-btn);
+  color: #f0f7f2;
+  border-color: var(--color-jade-border);
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(36, 75, 56, 0.25);
+}
+
+.btn-camera:hover:not(:disabled) {
+  background-color: var(--color-jade-btn-hover);
+  box-shadow: 0 2px 12px rgba(46, 93, 70, 0.35);
+  transform: translateY(-1px);
 }
 
 .btn-icon {
   background-color: var(--color-bg-tertiary);
   color: var(--color-text-primary);
   border-color: var(--color-border);
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   padding: 0;
   justify-content: center;
-  font-size: 14px;
 }
 
 .btn-icon:hover:not(:disabled) {
-  background-color: #475569;
+  background-color: #2a3344;
   border-color: var(--color-accent);
+  color: var(--color-accent-hover);
 }
 
 .btn-subtle {
@@ -174,11 +206,14 @@ const store = useDocumentStore()
   font-size: 12px;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
 }
 
 .btn-subtle:hover {
-  color: var(--color-text-primary);
+  color: var(--color-accent-hover);
+  background-color: var(--color-accent-subtle);
 }
 
 .file-badge {
@@ -203,13 +238,14 @@ const store = useDocumentStore()
 }
 
 .file-type {
-  background-color: rgba(56, 189, 248, 0.2);
-  color: #38bdf8;
+  background-color: rgba(197, 160, 89, 0.16);
+  color: #d4af37;
   font-size: 10px;
   font-weight: 700;
   padding: 2px 6px;
   border-radius: 4px;
   flex-shrink: 0;
+  border: 1px solid rgba(197, 160, 89, 0.25);
 }
 
 .page-indicator, .zoom-indicator {
@@ -224,11 +260,12 @@ const store = useDocumentStore()
   cursor: pointer;
   padding: 4px 6px;
   border-radius: var(--radius-sm);
+  transition: all 0.15s ease;
 }
 
 .zoom-indicator:hover {
   background-color: var(--color-bg-tertiary);
-  color: var(--color-text-primary);
+  color: var(--color-accent-hover);
 }
 
 /* Adaptación responsive para dispositivos móviles */
@@ -273,7 +310,6 @@ const store = useDocumentStore()
   .btn-icon {
     width: 28px;
     height: 28px;
-    font-size: 13px;
   }
 
   .zoom-indicator {
@@ -294,16 +330,13 @@ const store = useDocumentStore()
   }
 
   .btn-reset:hover {
-    background-color: #475569;
+    background-color: #2a3344;
     border-color: var(--color-accent);
+    color: var(--color-accent-hover);
   }
 
   .reset-text {
     display: none;
-  }
-
-  .reset-icon {
-    display: inline-block;
   }
 
   .page-full {

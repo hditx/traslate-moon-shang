@@ -139,4 +139,32 @@ class AndroidBridgeTest {
         assertEquals("force_online", bridge.getOperatingMode())
         assertEquals(true, bridge.isOnline())
     }
+
+    @Test
+    fun testCapturePhotoDefaultReturnsNullWhenNoHandler() {
+        val bridge = AndroidBridge()
+        assertEquals(null, bridge.capturePhoto())
+        assertEquals(null, bridge.capture_photo())
+    }
+
+    @Test
+    fun testCapturePhotoReturnsJsonWhenHandlerProvided() {
+        val expectedJson = JSONObject().apply {
+            put("filePath", "/data/user/0/com.moonshang.translator/cache/photo_123.jpg")
+            put("filename", "photo_123.jpg")
+        }.toString()
+
+        val bridge = AndroidBridge(
+            onCapturePhotoRequest = { expectedJson }
+        )
+
+        val result = bridge.capturePhoto()
+        assertNotNull(result)
+        val json = JSONObject(result!!)
+        assertEquals("/data/user/0/com.moonshang.translator/cache/photo_123.jpg", json.getString("filePath"))
+        assertEquals("photo_123.jpg", json.getString("filename"))
+
+        // Verificar alias snake_case
+        assertEquals(expectedJson, bridge.capture_photo())
+    }
 }

@@ -152,4 +152,44 @@ describe('AndroidBridge Service', () => {
     const played = await bridge.playAudio('你好')
     expect(played).toBe(true)
   })
+
+  it('reports isAndroid as true', () => {
+    const bridge = new AndroidBridge()
+    expect(bridge.isAndroid).toBe(true)
+  })
+
+  it('delegates capturePhoto and parses JSON response', async () => {
+    window.androidApi!.capturePhoto = vi.fn(async () =>
+      JSON.stringify({ filePath: '/cache/photo_capture.jpg', filename: 'photo_capture.jpg' }),
+    )
+
+    const bridge = new AndroidBridge()
+    const result = await bridge.capturePhoto()
+
+    expect(window.androidApi?.capturePhoto).toHaveBeenCalled()
+    expect(result).toEqual({ filePath: '/cache/photo_capture.jpg', filename: 'photo_capture.jpg' })
+  })
+
+  it('handles capturePhoto cancellation when returning null', async () => {
+    window.androidApi!.capturePhoto = vi.fn(async () => null)
+
+    const bridge = new AndroidBridge()
+    const result = await bridge.capturePhoto()
+
+    expect(result).toBeNull()
+  })
+
+  it('works when exposed on window.AndroidBridge instead of window.androidApi', async () => {
+    vi.stubGlobal('window', {
+      AndroidBridge: {
+        capturePhoto: vi.fn(async () =>
+          JSON.stringify({ filePath: '/cache/img.jpg', filename: 'img.jpg' }),
+        ),
+      },
+    })
+
+    const bridge = new AndroidBridge()
+    const res = await bridge.capturePhoto()
+    expect(res?.filename).toBe('img.jpg')
+  })
 })

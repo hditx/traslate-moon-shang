@@ -6,6 +6,7 @@ import type { DetectedToken } from '@/types/document'
 import Toolbar from './Toolbar.vue'
 import BoundingBoxOverlay from './BoundingBoxOverlay.vue'
 import TranslationPopover from './TranslationPopover.vue'
+import { IconBook, IconFolder, IconCamera } from '@/components/icons'
 
 const store = useDocumentStore()
 const {
@@ -135,10 +136,27 @@ function onViewportClick() {
     <!-- Estado vacío: cuando aún no se ha cargado documento -->
     <div v-if="!store.isDocumentLoaded" class="empty-state">
       <div class="empty-card" @click="store.openDocument()">
-        <span class="empty-icon">📄</span>
+        <IconBook :size="46" class="empty-icon-svg" />
         <h2 class="empty-title">Carga una imagen o PDF con texto en chino</h2>
-        <p class="empty-subtitle">Haz clic para buscar en tus archivos (.png, .jpg, .pdf)</p>
-        <button class="btn-open">Seleccionar archivo</button>
+        <p class="empty-subtitle">
+          {{ store.canCapturePhoto ? 'Selecciona un archivo o saca una foto para traducir' : 'Haz clic para buscar en tus archivos (.png, .jpg, .pdf)' }}
+        </p>
+        <div class="empty-actions">
+          <button class="btn-open" @click.stop="store.openDocument()">
+            <IconFolder :size="16" />
+            <span>Seleccionar archivo</span>
+          </button>
+          <button
+            v-if="store.canCapturePhoto"
+            class="btn-camera-large"
+            title="Sacar foto con la cámara"
+            data-testid="empty-camera-button"
+            @click.stop="store.capturePhoto()"
+          >
+            <IconCamera :size="16" />
+            <span>Sacar foto</span>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -232,7 +250,7 @@ function onViewportClick() {
   align-items: center;
   justify-content: center;
   cursor: grab;
-  background-image: radial-gradient(rgba(51, 65, 85, 0.4) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(197, 160, 89, 0.12) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
@@ -274,9 +292,9 @@ function onViewportClick() {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   background-color: var(--color-bg-secondary);
-  border: 2px dashed var(--color-border);
+  border: 2px dashed rgba(197, 160, 89, 0.35);
   padding: 48px;
   border-radius: var(--radius-lg);
   cursor: pointer;
@@ -287,12 +305,13 @@ function onViewportClick() {
 
 .empty-card:hover {
   border-color: var(--color-accent);
-  background-color: rgba(30, 41, 59, 0.8);
-  box-shadow: 0 0 24px rgba(56, 189, 248, 0.15);
+  background-color: rgba(23, 28, 36, 0.95);
+  box-shadow: 0 0 28px rgba(197, 160, 89, 0.16);
 }
 
-.empty-icon {
-  font-size: 48px;
+.empty-icon-svg {
+  color: var(--color-accent);
+  filter: drop-shadow(0 2px 8px rgba(197, 160, 89, 0.35));
 }
 
 .empty-title {
@@ -306,11 +325,19 @@ function onViewportClick() {
   color: var(--color-text-secondary);
 }
 
-.btn-open {
+.empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   margin-top: 8px;
+}
+
+.btn-open {
   background-color: var(--color-accent);
-  color: #0f172a;
-  border: none;
+  color: #11141a;
+  border: 1px solid rgba(212, 175, 55, 0.4);
   font-family: inherit;
   font-size: 14px;
   font-weight: 600;
@@ -318,18 +345,47 @@ function onViewportClick() {
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(197, 160, 89, 0.2);
 }
 
 .btn-open:hover {
   background-color: var(--color-accent-hover);
+  box-shadow: 0 2px 14px rgba(197, 160, 89, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-camera-large {
+  background-color: var(--color-jade-btn);
+  color: #f0f7f2;
+  border: 1px solid var(--color-jade-border);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(36, 75, 56, 0.25);
+}
+
+.btn-camera-large:hover {
+  background-color: var(--color-jade-btn-hover);
+  box-shadow: 0 2px 14px rgba(46, 93, 70, 0.4);
+  transform: translateY(-1px);
 }
 
 .loading-overlay {
   position: absolute;
   bottom: 24px;
-  background-color: rgba(15, 23, 42, 0.85);
+  background-color: rgba(18, 22, 30, 0.92);
   backdrop-filter: blur(8px);
-  border: 1px solid var(--color-border);
+  border: 1px solid rgba(197, 160, 89, 0.3);
   color: var(--color-text-primary);
   padding: 10px 20px;
   border-radius: 9999px;
@@ -338,14 +394,14 @@ function onViewportClick() {
   gap: 12px;
   font-size: 13px;
   font-weight: 500;
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-lg), 0 0 16px rgba(197, 160, 89, 0.12);
   z-index: 50;
 }
 
 .spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(56, 189, 248, 0.3);
+  border: 2px solid rgba(197, 160, 89, 0.25);
   border-top-color: var(--color-accent);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
@@ -362,9 +418,6 @@ function onViewportClick() {
     max-width: 340px;
     gap: 8px;
   }
-  .empty-icon {
-    font-size: 36px;
-  }
   .empty-title {
     font-size: 16px;
   }
@@ -372,6 +425,10 @@ function onViewportClick() {
     font-size: 13px;
   }
   .btn-open {
+    padding: 6px 16px;
+    font-size: 13px;
+  }
+  .btn-camera-large {
     padding: 6px 16px;
     font-size: 13px;
   }
